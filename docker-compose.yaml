@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  inventory_db:
+    image: postgres
+    restart: on-failure
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: curl -s https://localhost:5432 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - ./disks/inventory_pgdata:/var/lib/postgresql/data
+      - ./src/main/resources/init-db/init-haccp-inventory-db.sh:/docker-entrypoint-initdb.d/init-haccp-inventory-db.sh
+
+  iam_db:
+    image: postgres
+    restart: on-failure
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+      POSTGRES_HOST_AUTH_METHOD: trust
+    healthcheck:
+      test: curl -s https://localhost:5432 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - ./disks/iam_pgdata:/var/lib/postgresql/data
+      - ../haccp-iam/init-db/init-iam-db.sh:/docker-entrypoint-initdb.d/init-iam-db.sh
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:17.0.0
+    expose:
+      - 8443
+    ports:
+      - "8543:8443"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: haccp
+    volumes:
+      - ../haccp-iam/config/keycloak-keystore.jks:/etc/keycloak-keystore.jks
+    command: start --auto-build --db=postgres --db-url jdbc:postgresql://iam_db:5432/iam --db-username iam --hostname-strict=false --https-key-store-file=/etc/keycloak-keystore.jks
+    depends_on:
+      iam_db:
+        condition: service_healthy

@@ -1,0 +1,255 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <changeSet author="CsSzegleti" id="createBaseSchema">
+        <sql>
+            CREATE SCHEMA IF NOT EXISTS base;
+        </sql>
+        <createTable tableName="t_food_storage" schemaName="base">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" primaryKeyName="PK_FOOD_STORAGE" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(3000)"/>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="t_inventory_item" schemaName="base">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" primaryKeyName="PK_INVENTORY_ITEM" nullable="false"/>
+            </column>
+            <column name="menu_item_id" type="BIGINT"/>
+            <column name="food_storage_id" type="VARCHAR(36)">
+                <constraints nullable="false" foreignKeyName="FK_INVENTORY_ITEM_FOOD_STORAGE" references="base.t_food_storage(id)"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="t_cleaning" schemaName="base">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" primaryKeyName="PK_CLEANING" nullable="false"/>
+            </column>
+            <column name="food_storage_id" type="VARCHAR(36)">
+                <constraints nullable="false" foreignKeyName="FK_CLEANING_FOOD_STORAGE" references="base.t_food_storage(id)"/>
+            </column>
+            <column name="cleaned_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="t_control_point" schemaName="base">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" primaryKeyName="PK_CONTROL_POINT" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(1000)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="food_storage_id" type="VARCHAR(36)">
+                <constraints nullable="false" foreignKeyName="FK_CONTROL_POINT_FOOD_STORAGE" references="base.t_food_storage(id)"/>
+            </column>
+            <column name="limit_type" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="threshold" type="double">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="t_control_property" schemaName="base">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" primaryKeyName="PK_CONTROL_PROPERTY" nullable="false"/>
+            </column>
+            <column name="value" type="double">
+                <constraints nullable="false"/>
+            </column>
+            <column name="added_by" type="VARCHAR(255)"/>
+            <column name="control_point_id" type="VARCHAR(36)">
+                <constraints nullable="false" foreignKeyName="FK_CONTROL_PROPERTY_CONTROL_POINT" references="base.t_control_point(id)"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="CsSzegleti" id="createDevTenant1Schema">
+        <sql>
+            CREATE SCHEMA IF NOT EXISTS devtenant1;
+        </sql>
+        <createTable tableName="t_food_storage" schemaName="devtenant1">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" primaryKeyName="PK_FOOD_STORAGE" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(3000)"/>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="t_inventory_item" schemaName="devtenant1">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" primaryKeyName="PK_INVENTORY_ITEM" nullable="false"/>
+            </column>
+            <column name="menu_item_id" type="BIGINT"/>
+            <column name="food_storage_id" type="VARCHAR(36)">
+                <constraints nullable="false" foreignKeyName="FK_INVENTORY_ITEM_FOOD_STORAGE" references="devtenant1.t_food_storage(id)"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="t_cleaning" schemaName="devtenant1">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" primaryKeyName="PK_CLEANING" nullable="false"/>
+            </column>
+            <column name="food_storage_id" type="VARCHAR(36)">
+                <constraints nullable="false" foreignKeyName="FK_CLEANING_FOOD_STORAGE" references="devtenant1.t_food_storage(id)"/>
+            </column>
+            <column name="cleaned_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="t_control_point" schemaName="devtenant1">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" primaryKeyName="PK_CONTROL_POINT" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(1000)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="food_storage_id" type="VARCHAR(36)">
+                <constraints nullable="false" foreignKeyName="FK_CONTROL_POINT_FOOD_STORAGE" references="devtenant1.t_food_storage(id)"/>
+            </column>
+            <column name="limit_type" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="threshold" type="double">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="t_control_property" schemaName="devtenant1">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" primaryKeyName="PK_CONTROL_PROPERTY" nullable="false"/>
+            </column>
+            <column name="value" type="double">
+                <constraints nullable="false"/>
+            </column>
+            <column name="added_by" type="VARCHAR(255)"/>
+            <column name="control_point_id" type="VARCHAR(36)">
+                <constraints nullable="false" foreignKeyName="FK_CONTROL_PROPERTY_CONTROL_POINT" references="devtenant1.t_control_point(id)"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="CsSzegleti" id="createDevTenant2Schema">
+        <sql>
+            CREATE SCHEMA IF NOT EXISTS devtenant2;
+        </sql>
+        <createTable tableName="t_food_storage" schemaName="devtenant2">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" primaryKeyName="PK_FOOD_STORAGE" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(3000)"/>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="t_inventory_item" schemaName="devtenant2">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" primaryKeyName="PK_INVENTORY_ITEM" nullable="false"/>
+            </column>
+            <column name="menu_item_id" type="BIGINT"/>
+            <column name="food_storage_id" type="VARCHAR(36)">
+                <constraints nullable="false" foreignKeyName="FK_INVENTORY_ITEM_FOOD_STORAGE" references="devtenant2.t_food_storage(id)"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="t_cleaning" schemaName="devtenant2">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" primaryKeyName="PK_CLEANING" nullable="false"/>
+            </column>
+            <column name="food_storage_id" type="VARCHAR(36)">
+                <constraints nullable="false" foreignKeyName="FK_CLEANING_FOOD_STORAGE" references="devtenant2.t_food_storage(id)"/>
+            </column>
+            <column name="cleaned_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="t_control_point" schemaName="devtenant2">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" primaryKeyName="PK_CONTROL_POINT" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(1000)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="food_storage_id" type="VARCHAR(36)">
+                <constraints nullable="false" foreignKeyName="FK_CONTROL_POINT_FOOD_STORAGE" references="devtenant2.t_food_storage(id)"/>
+            </column>
+            <column name="limit_type" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="threshold" type="double">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="t_control_property" schemaName="devtenant2">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" primaryKeyName="PK_CONTROL_PROPERTY" nullable="false"/>
+            </column>
+            <column name="value" type="double">
+                <constraints nullable="false"/>
+            </column>
+            <column name="added_by" type="VARCHAR(255)"/>
+            <column name="control_point_id" type="VARCHAR(36)">
+                <constraints nullable="false" foreignKeyName="FK_CONTROL_PROPERTY_CONTROL_POINT" references="devtenant2.t_control_point(id)"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

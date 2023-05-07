@@ -1,0 +1,1 @@
+curl -v -X POST http://devtenant1:8080/api/haccp/storage/7f000101-80f0-17f7-8180-f01db47f0000 --header "Authorization: Bearer "$access_token --header 'Content-Type: application/json'
