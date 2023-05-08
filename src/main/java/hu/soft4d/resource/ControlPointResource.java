@@ -21,8 +21,8 @@ import java.util.List;
 import static hu.soft4d.resource.utils.Roles.ADMIN_ROLE;
 import static hu.soft4d.resource.utils.Roles.USER_ROLE;
 
-@Path("/api/haccp/storage/{storageId}/ccp")
-@Authenticated
+@Path("/api/v1/storage/{storageId}/ccp")
+//@Authenticated
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "ControlPoint", description = "Managing critical control points.")
@@ -48,8 +48,8 @@ public class ControlPointResource {
         )
     })
     @GET
-    @Operation(summary = "List all critical control points.")
-    @RolesAllowed(USER_ROLE)
+    @Operation(summary = "List all critical control points.", operationId = "listAllControlPoints")
+    //@RolesAllowed(USER_ROLE)
     public List<ControlPoint> listAll() {
         return controlPointService.listAll(storageId);
     }
@@ -72,8 +72,8 @@ public class ControlPointResource {
             content = {@Content(mediaType = "application/json")}
         )
     })
-    @Operation(summary = "Find critical control point by ID.")
-    @RolesAllowed(USER_ROLE)
+    @Operation(summary = "Find critical control point by ID.", operationId = "FindControlPointById")
+    //@RolesAllowed(USER_ROLE)
     public ControlPoint findById(@PathParam("id") String controlPointId) {
         return controlPointService.findById(storageId, controlPointId);
     }
@@ -96,8 +96,8 @@ public class ControlPointResource {
     })
     @Transactional(Transactional.TxType.REQUIRED)
     @NoCache
-    @RolesAllowed(ADMIN_ROLE)
-    @Operation(summary = "Create new storage.")
+    //@RolesAllowed(ADMIN_ROLE)
+    @Operation(summary = "Create new storage.", operationId = "addControlPoint")
     public Response persist(ControlPoint controlPoint, @Context UriInfo uriInfo) {
         controlPointService.persist(storageId, controlPoint);
         UriBuilder builder = uriInfo.getAbsolutePathBuilder().path(controlPoint.getId());
@@ -122,11 +122,16 @@ public class ControlPointResource {
             content = {@Content(mediaType = "application/json")}
         )
     })
-    @RolesAllowed(ADMIN_ROLE)
-    @Operation(summary = "Update existing critical control point.")
-    public Response update(ControlPoint controlPoint, @Context UriInfo uriInfo) {
+    @Path("{id}")
+    //@RolesAllowed(ADMIN_ROLE)
+    @Operation(summary = "Update existing critical control point.", operationId = "modifyControlPoint")
+    public Response update(ControlPoint controlPoint, @PathParam("id") String id, @Context UriInfo uriInfo) {
+        if (!id.equals(controlPoint.getId())) {
+            throw new BadRequestException();
+        }
+
         controlPointService.update(storageId, controlPoint);
-        UriBuilder builder = uriInfo.getAbsolutePathBuilder().path(controlPoint.getId());
+        UriBuilder builder = uriInfo.getAbsolutePathBuilder();
         return Response.created(builder.build()).build();
     }
 }

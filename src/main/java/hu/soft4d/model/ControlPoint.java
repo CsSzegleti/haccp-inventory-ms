@@ -1,7 +1,9 @@
 package hu.soft4d.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -33,6 +35,7 @@ public class ControlPoint {
     }
 
     @Column(name = "name", nullable = false)
+    @Schema(required = true)
     private String name;
 
     @Column(name = "description", length = 1000)
@@ -40,10 +43,11 @@ public class ControlPoint {
 
     @ManyToOne
     @JoinColumn(name = "food_storage_id", nullable = false)
-    @JsonIgnore
+    @JsonBackReference
     private FoodStorage foodStorage;
 
     @OneToMany(mappedBy = "controlPoint")
+    @JsonManagedReference
     private List<ControlProperty> properties;
 
     @Enumerated(EnumType.STRING)

@@ -1,6 +1,6 @@
 package hu.soft4d.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -28,7 +28,7 @@ public class Cleaning {
 
     @ManyToOne
     @JoinColumn(name = "food_storage_id", nullable = false)
-    @JsonIgnore
+    @JsonBackReference
     private FoodStorage foodStorage;
 
     @Column(name = "cleaned_by", nullable = false)

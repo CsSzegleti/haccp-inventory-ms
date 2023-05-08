@@ -1,6 +1,6 @@
 package hu.soft4d.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -32,7 +32,7 @@ public class ControlProperty {
 
     @ManyToOne
     @JoinColumn(name = "control_point_id", nullable = false)
-    @JsonIgnore
+    @JsonBackReference
     private ControlPoint controlPoint;
 
     @Column(name = "added_by")

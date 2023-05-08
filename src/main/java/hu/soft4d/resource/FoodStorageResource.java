@@ -16,15 +16,7 @@ import org.jboss.resteasy.annotations.cache.NoCache;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -37,8 +29,8 @@ import java.util.Optional;
 import static hu.soft4d.resource.utils.Roles.ADMIN_ROLE;
 import static hu.soft4d.resource.utils.Roles.USER_ROLE;
 
-@Path("/api/haccp/storage")
-@Authenticated
+@Path("/api/v1/storage")
+//@Authenticated
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "FoodStorage", description = "Managing storages")
@@ -65,8 +57,8 @@ public class FoodStorageResource {
             content = {@Content(mediaType = "application/json")}
         )
     })
-    @Operation(summary = "Find storage by ID.")
-    @RolesAllowed(USER_ROLE)
+    @Operation(summary = "Find storage by ID.", operationId = "findFoodStorageById")
+    //@RolesAllowed(USER_ROLE)
     public FoodStorage findFoodStorageById(@PathParam("id") String id) {
         return foodStorageService.findByIdOptional(id).orElseThrow(NotFoundException::new);
     }
@@ -85,8 +77,8 @@ public class FoodStorageResource {
         )
     })
     @GET
-    @Operation(summary = "List all storages.")
-    @RolesAllowed(USER_ROLE)
+    @Operation(summary = "List all storages.", operationId = "listAllFoodStorages")
+    //@RolesAllowed(USER_ROLE)
     public List<FoodStorage> listAllStorages() {
         return foodStorageService.listAll();
     }
@@ -109,8 +101,8 @@ public class FoodStorageResource {
     @POST
     @Transactional(Transactional.TxType.REQUIRED)
     @NoCache
-    @RolesAllowed(ADMIN_ROLE)
-    @Operation(summary = "Create new storage.")
+//    @RolesAllowed(ADMIN_ROLE)
+    @Operation(summary = "Create new storage.", operationId = "addNewFoodStorage")
     public Response persistFoodStorage(FoodStorage foodStorage, @Context UriInfo uriInfo) {
         foodStorageService.persist(foodStorage);
         UriBuilder builder = uriInfo.getAbsolutePathBuilder().path(foodStorage.getId());
@@ -133,11 +125,16 @@ public class FoodStorageResource {
         )
     })
     @PUT
+    @Path("{id}")
     @Transactional
     @NoCache
-    @RolesAllowed(ADMIN_ROLE)
-    @Operation(summary = "Update existing food storage.")
-    public Response updateFoodStorage(FoodStorage foodStorage, @Context UriInfo uriInfo) throws InvocationTargetException, IllegalAccessException {
+    //@RolesAllowed(ADMIN_ROLE)
+    @Operation(summary = "Update existing food storage.", operationId = "updateFoodStorage")
+    public Response updateFoodStorage(FoodStorage foodStorage, @PathParam("id") String id, @Context UriInfo uriInfo) throws InvocationTargetException, IllegalAccessException {
+        if (!id.equals(foodStorage.getId())) {
+            throw new BadRequestException();
+        }
+
         Optional<FoodStorage> entity = foodStorageService.findByIdOptional(foodStorage.getId());
         if (entity.isEmpty()) {
             throw new NotFoundException();
@@ -145,7 +142,7 @@ public class FoodStorageResource {
 
         BeanUtils.copyProperties(entity.get(), foodStorage);
 
-        UriBuilder builder = uriInfo.getAbsolutePathBuilder().path(foodStorage.getId());
+        UriBuilder builder = uriInfo.getAbsolutePathBuilder();
         return Response.ok(builder.build()).build();
     }
 
@@ -165,8 +162,8 @@ public class FoodStorageResource {
     @DELETE
     @Transactional
     @Path("{id}")
-    @RolesAllowed(ADMIN_ROLE)
-    @Operation(summary = "Delete food storage by ID.")
+    //@RolesAllowed(ADMIN_ROLE)
+    @Operation(summary = "Delete food storage by ID.", operationId = "deleteFoodStorageById")
     public void deleteFoodStorage(@PathParam("id") String id) {
         foodStorageService.deleteById(id);
     }
@@ -183,8 +180,8 @@ public class FoodStorageResource {
                 content = {@Content(mediaType = "application/json")})
     })
     @Path("{id}/add_item")
-    @RolesAllowed(USER_ROLE)
-    @Operation(summary = "Add menu item to storage using its ID. Returns")
+    //@RolesAllowed(USER_ROLE)
+    @Operation(summary = "Add menu item to storage using its ID. Returns", operationId = "addMenuItemToFoodStorage")
     public List<String> AddInventoryItem(@PathParam("id") String storageId, InventoryItemToMoveDto itemToAdd) {
         return foodStorageService.addMultipleItemsToStorage(storageId, itemToAdd);
     }
@@ -205,8 +202,8 @@ public class FoodStorageResource {
             content = {@Content(mediaType = "application/json")}
         )
     })
-    @RolesAllowed(USER_ROLE)
-    @Operation(summary = "Remove menu item from storage.")
+    //@RolesAllowed(USER_ROLE)
+    @Operation(summary = "Remove menu item from storage.", operationId = "removeMenuItemFromFoodStorage")
     public List<String> RemoveInventoryItem(@PathParam("id") String storageId, InventoryItemToMoveDto itemToRemove) {
         return foodStorageService.removeMultipleItemsFromStorage(storageId, itemToRemove);
     }

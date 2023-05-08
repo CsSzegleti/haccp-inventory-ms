@@ -20,9 +20,9 @@ import java.util.List;
 
 import static hu.soft4d.resource.utils.Roles.USER_ROLE;
 
-@Path("/api/haccp/storage/{storageId}/cleaning")
+@Path("/api/v1/storage/{storageId}/cleaning")
 
-@Authenticated
+//@Authenticated
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Cleaning", description = "Add and read cleanings.")
@@ -50,8 +50,8 @@ public class CleaningResource {
             content = {@Content(mediaType = "application/json")}
         )
     })
-    @Operation(summary = "List all cleanings for the specific storage.")
-    @RolesAllowed(USER_ROLE)
+    @Operation(summary = "List all cleanings for the specific storage.", operationId = "listAllCleaning")
+    //@RolesAllowed(USER_ROLE)
     public List<Cleaning> listAll() {
         return cleaningService.getAll(storageId);
     }
@@ -74,8 +74,8 @@ public class CleaningResource {
             content = {@Content(mediaType = "application/json")}
         )
     })
-    @Operation(summary = "Get last cleaning for the specific storage")
-    @RolesAllowed(USER_ROLE)
+    @Operation(summary = "Get last cleaning for the specific storage", operationId = "getLastCleaning")
+    //@RolesAllowed(USER_ROLE)
     public Cleaning getLast() {
         return cleaningService.getLast(storageId);
     }
@@ -98,8 +98,8 @@ public class CleaningResource {
             content = {@Content(mediaType = "application/json")}
         )
     })
-    @Operation(summary = "Find cleaning by ID.")
-    @RolesAllowed(USER_ROLE)
+    @Operation(summary = "Find cleaning by ID.", operationId = "getCleaningById")
+    //@RolesAllowed(USER_ROLE)
     public Cleaning findById(@PathParam("id") String cleaningId) {
         return cleaningService.getOne(storageId, cleaningId);
     }
@@ -121,8 +121,8 @@ public class CleaningResource {
             content = {@Content(mediaType = "application/json")}
         )
     })
-    @RolesAllowed(USER_ROLE)
-    @Operation(summary = "Administrate new cleaning.")
+    //@RolesAllowed(USER_ROLE)
+    @Operation(summary = "Administrate new cleaning.", operationId = "addCleaning")
     public Response save(@Context UriInfo uriInfo) {
         String userName = securityIdentity.getPrincipal().getName();
 

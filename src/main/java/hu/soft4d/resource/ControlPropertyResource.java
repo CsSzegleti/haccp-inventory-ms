@@ -21,8 +21,8 @@ import java.util.List;
 
 import static hu.soft4d.resource.utils.Roles.USER_ROLE;
 
-@Path("/api/haccp/storage/{storageId}/ccp/{ccpId}/property")
-@Authenticated
+@Path("/api/v1/storage/{storageId}/ccp/{ccpId}/property")
+//@Authenticated
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "ControlProperty", description = "Adding and reading properties for critical control point.")
@@ -53,8 +53,8 @@ public class ControlPropertyResource {
         )
     })
     @GET
-    @Operation(summary = "List all properties for the critical control point.")
-    @RolesAllowed(USER_ROLE)
+    @Operation(summary = "List all properties for the critical control point.", operationId = "listAllControlProperty")
+    //@RolesAllowed(USER_ROLE)
     public List<ControlProperty> listAll() {
         return controlPropertyService.getAll(ccpId);
     }
@@ -77,8 +77,8 @@ public class ControlPropertyResource {
             content = {@Content(mediaType = "application/json")}
         )
     })
-    @Operation(summary = "Find latest property for the critical control point.")
-    @RolesAllowed(USER_ROLE)
+    @Operation(summary = "Find latest property for the critical control point.", operationId = "getLastControlProperty")
+    //@RolesAllowed(USER_ROLE)
     public ControlProperty getLast() {
         return controlPropertyService.getLast(ccpId);
     }
@@ -100,8 +100,8 @@ public class ControlPropertyResource {
             content = {@Content(mediaType = "application/json")}
         )
     })
-    @Operation(summary = "Find  by ID.")
-    @RolesAllowed(USER_ROLE)
+    @Operation(summary = "Find  by ID.", operationId = "findControlPropertyById")
+    //@RolesAllowed(USER_ROLE)
     public ControlProperty findById(@PathParam("id") String controlPropertyId) {
         return controlPropertyService.getOne(ccpId, controlPropertyId);
     }
@@ -124,8 +124,8 @@ public class ControlPropertyResource {
     @POST
     @Transactional(Transactional.TxType.REQUIRED)
     @NoCache
-    @RolesAllowed(USER_ROLE)
-    @Operation(summary = "Administrate new property.")
+    //@RolesAllowed(USER_ROLE)
+    @Operation(summary = "Administrate new property.", operationId = "addNewControlProperty")
     public Response persist(ControlProperty property, @Context UriInfo uriInfo) {
         String userName = securityIdentity.getPrincipal().getName();
 

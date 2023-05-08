@@ -1,6 +1,6 @@
 package hu.soft4d.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -38,13 +38,14 @@ public class FoodStorage {
     private Instant createdDate = Instant.now();
 
     @OneToMany(mappedBy = "foodStorage")
-    @JsonIgnore
+    @JsonManagedReference
     private List<Cleaning> cleanings;
 
     @OneToMany(mappedBy = "foodStorage")
-    @JsonIgnore
+    @JsonManagedReference
     private List<ControlPoint> controlPoints;
 
     @OneToMany(mappedBy = "foodStorage")
+    @JsonManagedReference
     private List<InventoryItem> items;
 }

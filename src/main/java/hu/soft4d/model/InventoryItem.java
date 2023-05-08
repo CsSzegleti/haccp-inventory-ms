@@ -1,6 +1,6 @@
 package hu.soft4d.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -34,7 +34,7 @@ public class InventoryItem {
 
     @ManyToOne
     @JoinColumn(name = "food_storage_id", nullable = false)
-    @JsonIgnore
+    @JsonBackReference
     private FoodStorage foodStorage;
 
     @Column(name = "created_date", nullable = false)
